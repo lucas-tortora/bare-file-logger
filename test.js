@@ -97,3 +97,28 @@ test('rotate - does not call rotate when under threshold', async (t) => {
 
   t.pass('rotate was not called')
 })
+
+test('truncate - truncates file when maxSize is reached', async (t) => {
+  t.plan(2)
+
+  const tmp = await t.tmp()
+  const logPath = path.join(tmp, 'test.log')
+
+  const log = new FileLog(logPath, {
+    maxSize: 50,
+    rotateInterval: 100
+  })
+  t.teardown(() => log.close())
+
+  log.once('rotate', () => {
+    t.pass('rotated')
+  })
+
+  for (let i = 0; i < 5; i++) {
+    log.info('filling up the log file with data')
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 200))
+
+  t.is(fs.statSync(logPath).size, 0, 'new log file is empty')
+})

@@ -51,8 +51,11 @@ class FileLog extends EventEmitter {
   }
 
   clear() {
-    fs.ftruncateSync(this._fd)
+    // Truncate by path rather than on the append fd. On Windows an 'a+' handle
+    // only has FILE_APPEND_DATA, so ftruncate on it fails with EPERM.
     fs.closeSync(this._fd)
+    this._fd = -1
+    fs.truncateSync(this._path, 0)
 
     this._fd = fs.openSync(this._path, 'a+')
   }
@@ -84,10 +87,13 @@ class FileLog extends EventEmitter {
 
     if (this._fd === -1) return
 
-    if (archived) fs.renameSync(this._path, archived)
-    else fs.ftruncateSync(this._fd)
-
     fs.closeSync(this._fd)
+    this._fd = -1
+
+    // Truncate by path rather than on the append fd. On Windows an 'a+' handle
+    // only has FILE_APPEND_DATA, so ftruncate on it fails with EPERM.
+    if (archived) fs.renameSync(this._path, archived)
+    else fs.truncateSync(this._path, 0)
 
     this._fd = fs.openSync(this._path, 'a+')
 
