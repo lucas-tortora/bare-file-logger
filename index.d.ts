@@ -22,7 +22,7 @@ interface FileLogEvents extends EventMap {
   rotate: [path: string, archived: string | null]
 }
 
-/** Construct a new `FileLog` that writes to the file at `path`. */
+/** A logger that appends timestamped lines to a file, with optional size-based rotation. */
 interface FileLog extends EventEmitter<FileLogEvents>, Log, Disposable {
   /**
    * @param label - A short severity label, right-padded to five characters (e.g. `info`, `error`),
@@ -40,6 +40,7 @@ interface FileLog extends EventEmitter<FileLogEvents>, Log, Disposable {
 
 declare class FileLog {
   /**
+   * Construct a new `FileLog` that writes to the file at `path`.
    * @param path - Path to the log file; opened for appending, and created if it does not exist.
    * @param options - Options controlling log rotation; see [`FileLogOptions`](#filelogoptions).
    */
