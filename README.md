@@ -14,9 +14,7 @@ log.info('Hello %s', 'world!')
 
 ## API
 
-See the [`bare-file-logger` reference][reference].
-
-[reference]: https://docs.pears.com/reference/bare/modules/bare-file-logger
+See the [`bare-file-logger` reference](https://docs.pears.com/reference/bare/modules/bare-file-logger).
 
 ## License
 
